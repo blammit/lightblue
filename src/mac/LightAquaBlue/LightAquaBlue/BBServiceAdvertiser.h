@@ -28,7 +28,7 @@
 @class IOBluetoothSDPUUID;
 
 @interface BBServiceAdvertiser : NSObject {
-	//
+	IOBluetoothSDPServiceRecord *mServiceRecord;
 }
 
 /*

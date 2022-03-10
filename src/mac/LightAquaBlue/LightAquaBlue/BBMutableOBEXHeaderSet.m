@@ -40,7 +40,7 @@ static NSString *UTC_FORMAT_STRING = @"%Y%m%dT%H%M%SZ";
 
 + (id)headerSet
 {
-    return [[[BBMutableOBEXHeaderSet alloc] init] autorelease];
+    return [[BBMutableOBEXHeaderSet alloc] init];
 }
 
 - (void)setValueForCountHeader:(uint32_t)count
@@ -211,7 +211,7 @@ static NSString *parseString(const uint8_t *bytes, unsigned int length)
 	NSString *s = [[NSString alloc] initWithBytes:bytes 
 										   length:length
 										 encoding:NSUnicodeStringEncoding];
-	return [s autorelease];
+	return s;
 }
 
 static NSData *parseData(const uint8_t *bytes, unsigned int length)

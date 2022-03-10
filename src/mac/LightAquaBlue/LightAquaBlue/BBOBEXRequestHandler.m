@@ -82,7 +82,6 @@ static BOOL _debug = NO;
     OBEXFlags requestFlags = 0;
 
     if (mNextResponseHeaders) {
-        [mNextResponseHeaders release];
         mNextResponseHeaders = nil;
     }
     
@@ -179,8 +178,6 @@ static BOOL _debug = NO;
 
 - (void)dealloc
 {
-    [mNextResponseHeaders release];
-    [super dealloc];
 }
 
 @end
@@ -238,7 +235,7 @@ static BOOL _debug = NO;
     
     CFMutableDataRef bytes = NULL;
     if (mNextResponseHeaders) {
-        bytes = (CFMutableDataRef)[mNextResponseHeaders toBytes];
+        bytes = (__bridge CFMutableDataRef)[mNextResponseHeaders toBytes];
         if (!bytes && [mNextResponseHeaders count] > 0)
             return kOBEXInternalError;
     }
@@ -270,7 +267,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [super dealloc];
 }
 
 @end
@@ -322,7 +318,7 @@ static BOOL _debug = NO;
     
     CFMutableDataRef bytes = NULL;
     if (mNextResponseHeaders) {
-        bytes = (CFMutableDataRef)[mNextResponseHeaders toBytes];
+        bytes = (__bridge CFMutableDataRef)[mNextResponseHeaders toBytes];
         if (!bytes && [mNextResponseHeaders count] > 0)
             return kOBEXInternalError;
     }
@@ -350,7 +346,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [super dealloc];
 }
 
 @end
@@ -415,7 +410,6 @@ static BOOL _debug = NO;
         mNextResponseCode = -1;
         NSOutputStream *outputStream = [[mServer delegate] server:mServer
                                            shouldHandlePutRequest:allRequestHeaders];
-        [mPreviousRequestHeaders release];
         mPreviousRequestHeaders = nil;
         
         // see if delegate accepted request
@@ -448,7 +442,7 @@ static BOOL _debug = NO;
             mNextResponseCode =  kOBEXResponseCodeInternalServerErrorWithFinalBit;
             return;
         }        
-        mOutputStream = [outputStream retain];
+        mOutputStream = outputStream;
     }
     
     int dataLength = 0;
@@ -507,7 +501,6 @@ static BOOL _debug = NO;
     BOOL accept = [[mServer delegate] server:mServer
                 shouldHandlePutDeleteRequest:allRequestHeaders];
     
-    [mPreviousRequestHeaders release];
     mPreviousRequestHeaders = nil;
     
     if (mNextResponseCode == -1 || mNextResponseCode == kOBEXResponseCodeContinueWithFinalBit ||
@@ -553,7 +546,7 @@ static BOOL _debug = NO;
     
     CFMutableDataRef bytes = NULL;
     if (mNextResponseHeaders) {
-        bytes = (CFMutableDataRef)[mNextResponseHeaders toBytes];
+        bytes = (__bridge CFMutableDataRef)[mNextResponseHeaders toBytes];
         if (!bytes && [mNextResponseHeaders count] > 0)
             return kOBEXInternalError;
     }  
@@ -600,7 +593,6 @@ static BOOL _debug = NO;
         }
     }
     
-    [mOutputStream release];
     mOutputStream = nil;
     mDefinitelyIsPut = NO;
     mAborted = NO;
@@ -610,9 +602,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [mPreviousRequestHeaders release];
-    [mOutputStream release];
-    [super dealloc];
 }
 
 @end
@@ -717,12 +706,12 @@ static BOOL _debug = NO;
             mNextResponseCode = kOBEXResponseCodeInternalServerErrorWithFinalBit;
             return;
         }                
-        mInputStream = [inputStream retain];
+        mInputStream = inputStream;
     }
     
     if (!mNextResponseHeaders)
         mNextResponseHeaders = [[BBMutableOBEXHeaderSet alloc] init];
-    CFMutableDataRef tempHeaderBytes = (CFMutableDataRef)[mNextResponseHeaders toBytes];
+    CFMutableDataRef tempHeaderBytes = (__bridge CFMutableDataRef)[mNextResponseHeaders toBytes];
     int currentHeaderLength = 0; 
     if (tempHeaderBytes) {
         currentHeaderLength = CFDataGetLength(tempHeaderBytes);
@@ -752,8 +741,6 @@ static BOOL _debug = NO;
         return;
     }
     
-    [mutableData retain];
-    [mSentBodyData release];
     mSentBodyData = mutableData;
 
     if (mNextResponseCode == -1 || mNextResponseCode == kOBEXResponseCodeContinueWithFinalBit ||
@@ -771,7 +758,7 @@ static BOOL _debug = NO;
 
     CFMutableDataRef bytes = NULL;
     if (mNextResponseHeaders) {
-        bytes = (CFMutableDataRef)[mNextResponseHeaders toBytes];
+        bytes = (__bridge CFMutableDataRef)[mNextResponseHeaders toBytes];
         if (!bytes && [mNextResponseHeaders count] > 0)
             return kOBEXInternalError;
     }   
@@ -816,7 +803,6 @@ static BOOL _debug = NO;
                  requestWasAborted:mAborted];
     }
     
-    [mInputStream release];
     mInputStream = nil;
     mAborted = NO;
 }
@@ -825,9 +811,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [mSentBodyData release];
-    [mInputStream release];
-    [super dealloc];
 }
 
 @end
@@ -885,7 +868,7 @@ static BOOL _debug = NO;
     
     CFMutableDataRef bytes = NULL;
     if (mNextResponseHeaders) {
-        bytes = (CFMutableDataRef)[mNextResponseHeaders toBytes];
+        bytes = (__bridge CFMutableDataRef)[mNextResponseHeaders toBytes];
         if (!bytes && [mNextResponseHeaders count] > 0)
             return kOBEXInternalError;
     }
@@ -912,7 +895,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [super dealloc];
 }
 
 @end

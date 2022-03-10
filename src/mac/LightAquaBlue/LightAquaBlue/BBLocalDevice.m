@@ -25,6 +25,7 @@
 #import <IOBluetooth/Bluetooth.h>
 #import <IOBluetooth/IOBluetoothUserLib.h>
 #import <IOBluetooth/IOBluetoothUtilities.h>
+#import <IOBluetooth/objc/IOBluetoothHostController.h>
 
 #import "BBLocalDevice.h"
 
@@ -33,56 +34,26 @@
 
 + (NSString *)getName
 {
-	BluetoothDeviceName name;
-    IOReturn result;
-	
-	result = IOBluetoothLocalDeviceReadName(name, NULL, NULL, NULL);
-    if (result == kIOReturnSuccess) {
-		NSString *s = [NSString stringWithCString:(char *)name];
-		if (s != nil) 
-			return s;
-    }        
-	
-    return nil;
+    IOBluetoothHostController *host = [[IOBluetoothHostController alloc] init];
+    return [host nameAsString];
 }
 
 + (NSString *)getAddressString
 {
-	BluetoothDeviceAddress address;
-    IOReturn result;
-	
-	result = IOBluetoothLocalDeviceReadAddress(&address, NULL, NULL, NULL);
-    if (result == kIOReturnSuccess) {
-		return IOBluetoothNSStringFromDeviceAddress(&address);
-    }        
-	
-    return nil;
+    IOBluetoothHostController *host = [[IOBluetoothHostController alloc] init];
+    return [host addressAsString];
 }
 
 + (BluetoothClassOfDevice)getClassOfDevice
 {
-	BluetoothClassOfDevice classOfDevice;
-    IOReturn result;
-	
-	result = IOBluetoothLocalDeviceReadClassOfDevice(&classOfDevice, NULL, NULL, NULL);
-    if (result == kIOReturnSuccess) {
-		return classOfDevice;
-    }        
-	
-    return -1;
+    IOBluetoothHostController *host = [[IOBluetoothHostController alloc] init];
+    return [host classOfDevice];
 }
 
 + (BOOL)isPoweredOn
 {
-	if (!IOBluetoothLocalDeviceAvailable()) 
-		return NO;
-	
-	BluetoothHCIPowerState powerState;
-	IOReturn status = IOBluetoothLocalDeviceGetPowerState(&powerState);
-	if (status != kIOReturnSuccess || powerState != kBluetoothHCIPowerStateON) 
-		return NO;
-	
-	return YES;
+    IOBluetoothHostController *host = [[IOBluetoothHostController alloc] init];
+    return [host powerState] == 1;
 }
 
 @end

@@ -118,37 +118,31 @@ static NSDictionary *fileTransferProfileDict;
 	if (dict == nil)
 		return kIOReturnError;
 	
-	NSMutableDictionary *sdpEntries = [NSMutableDictionary dictionaryWithDictionary:dict];
+    NSMutableDictionary *sdpEntries = [NSMutableDictionary dictionaryWithDictionary:dict];
 	[BBServiceAdvertiser updateServiceDictionary:sdpEntries
 										withName:serviceName
 										withUUID:uuid];
 	
 	// publish the service
-	IOBluetoothSDPServiceRecordRef serviceRecordRef;
-	IOReturn status = IOBluetoothAddServiceDict((CFDictionaryRef) sdpEntries, &serviceRecordRef);
-	
-	if (status == kIOReturnSuccess) {
-		
-		IOBluetoothSDPServiceRecord *serviceRecord =
-			[IOBluetoothSDPServiceRecord withSDPServiceRecordRef:serviceRecordRef];
-		
-		// get service channel ID & service record handle
-		status = [serviceRecord getRFCOMMChannelID:outChannelID];
-		if (status == kIOReturnSuccess) {
-			status = [serviceRecord getServiceRecordHandle:outServiceRecordHandle];
-		}
-		
-		// cleanup
-		IOBluetoothObjectRelease(serviceRecordRef);
-	}
-	
-	return status;
+    IOBluetoothSDPServiceRecord *serviceRecord =
+			[IOBluetoothSDPServiceRecord publishedServiceRecordWithDictionary:sdpEntries];
+    if (serviceRecord == nil)
+        return kIOReturnError;
+
+    // get service channel ID & service record handle
+    IOReturn status = [serviceRecord getRFCOMMChannelID:outChannelID];
+    if (status == kIOReturnSuccess)
+        status = [serviceRecord getServiceRecordHandle:outServiceRecordHandle];
+
+    return status;
 }
 
 
 + (IOReturn)removeService:(BluetoothSDPServiceRecordHandle)handle
 {
-	return IOBluetoothRemoveServiceWithRecordHandle(handle);
+    // TODO
+    NSLog(@"removeService() is not implemented!");
+    return kIOReturnError;
 }
 
 @end

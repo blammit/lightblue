@@ -30,8 +30,8 @@
 + (id)responseWithCode:(int)responseCode
                headers:(BBOBEXHeaderSet *)headers
 {
-    return [[[BBOBEXResponse alloc] initWithCode:responseCode
-                                         headers:headers] autorelease];
+    return [[BBOBEXResponse alloc] initWithCode:responseCode
+                                         headers:headers];
 }
 
 - (id)initWithCode:(int)responseCode
@@ -40,7 +40,7 @@
     self = [super init];
     
     mCode = responseCode;
-    mHeaders = [headers retain];
+    mHeaders = headers;
     
     return self;
 }
@@ -141,8 +141,6 @@
 
 - (void)dealloc
 {
-    [mHeaders release];
-    [super dealloc];
 }
 
 @end

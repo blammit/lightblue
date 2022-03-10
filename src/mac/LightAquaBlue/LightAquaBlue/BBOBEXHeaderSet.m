@@ -41,7 +41,7 @@ static const uint8_t NULL_TERMINATORS[2] = { 0x00, 0x00 };
 
 + (id)headerSet
 {
-    return [[[BBOBEXHeaderSet alloc] init] autorelease];
+    return [[BBOBEXHeaderSet alloc] init];
 }
 
 - (id)init
@@ -84,9 +84,9 @@ static const uint8_t NULL_TERMINATORS[2] = { 0x00, 0x00 };
                                   encoding:NSASCIIStringEncoding];
     }
     
-    return [[[NSString alloc] initWithBytes:[data bytes]
+    return [[NSString alloc] initWithBytes:[data bytes]
                                      length:[data length]
-                                   encoding:NSASCIIStringEncoding] autorelease];
+                                   encoding:NSASCIIStringEncoding];
 }
 
 - (unsigned int)valueForLengthHeader
@@ -98,9 +98,9 @@ static const uint8_t NULL_TERMINATORS[2] = { 0x00, 0x00 };
 {
     NSData *data = [self valueForByteSequenceHeader:kOBEXHeaderIDTimeISO];
     if (data && [data length] > 0) {
-        NSString *s = [[[NSString alloc] initWithBytes:[data bytes]
+        NSString *s = [[NSString alloc] initWithBytes:[data bytes]
                                                 length:[data length]
-                                              encoding:NSASCIIStringEncoding] autorelease];
+                                              encoding:NSASCIIStringEncoding];
         NSCalendarDate *calendarDate = nil;
         if ([s characterAtIndex:[s length]-1] == 'Z') {
             calendarDate = [NSCalendarDate dateWithString:[s substringToIndex:[s length]-1]
@@ -418,9 +418,6 @@ static NSString *getHeaderDescription(uint8_t headerID)
 
 - (void)dealloc
 {
-    [mDict release];
-    [mKeys release];
-    [super dealloc];
 }
 
 @end

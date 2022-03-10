@@ -51,8 +51,8 @@ static BOOL _debug = NO;
 + (id)serverWithIncomingRFCOMMChannel:(IOBluetoothRFCOMMChannel *)channel
                              delegate:(id)delegate
 {
-    return [[[BBBluetoothOBEXServer alloc] initWithIncomingRFCOMMChannel:channel
-                                                                delegate:delegate] autorelease];
+    return [[BBBluetoothOBEXServer alloc] initWithIncomingRFCOMMChannel:channel
+                                                                delegate:delegate];
 }
 
 - (id)initWithIncomingRFCOMMChannel:(IOBluetoothRFCOMMChannel *)channel
@@ -60,7 +60,7 @@ static BOOL _debug = NO;
 {
     self = [super init];
     
-    mChannel = [channel retain];
+    mChannel = channel;
     mDelegate = delegate;
     
     return self;
@@ -98,7 +98,6 @@ static BOOL _debug = NO;
                                                                   session:mSession];
             break;                        
     }
-    [handler autorelease];
     return handler;
 }
 
@@ -124,7 +123,7 @@ static BOOL _debug = NO;
                                                 eventSelector:@selector(handleSessionEvent:)
                                                selectorTarget:self 
                                                        refCon:NULL];
-        mSession = [session retain];
+        mSession = session;;
         
         mChannelNotif = [mChannel registerForChannelCloseNotification:self 
                                                              selector:@selector(channelClosed:channel:)];        
@@ -160,13 +159,8 @@ static BOOL _debug = NO;
     if (mSession) 
         [mSession setEventSelector:NULL target:nil refCon:NULL];
     
-    [mCurrentRequestHandler release];
-    mCurrentRequestHandler = nil;    
-    
-    [mChannel release];
+    mCurrentRequestHandler = nil;
     mChannel = nil;
-    
-    [mSession release];
     mSession = nil;
 }
 
@@ -213,14 +207,12 @@ static BOOL _debug = NO;
                         description:[NSString stringWithFormat:@"Server received unknown event: %d", event->type]];
                 return;
             }
-            [mCurrentRequestHandler retain];
         }
         
         if (_debug) NSLog(DEBUG_NAME @"Found handler, %@", mCurrentRequestHandler);
         BOOL requestFinished = [mCurrentRequestHandler handleRequestEvent:event];
         if (requestFinished) {
             if (_debug) NSLog(DEBUG_NAME @"Finished request");
-            [mCurrentRequestHandler release];
             mCurrentRequestHandler = nil;
         }
     }
@@ -228,8 +220,6 @@ static BOOL _debug = NO;
 
 - (void)setOBEXSession:(OBEXSession *)session
 {
-    [session retain];
-    [mSession release];
     mSession = session;
 }
 
@@ -252,7 +242,6 @@ static BOOL _debug = NO;
 - (void)dealloc
 {
     [self close];
-    [super dealloc];
 }
 
 @end

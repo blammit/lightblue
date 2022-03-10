@@ -92,8 +92,6 @@ static BOOL _debug = NO;
 
 - (void)dealloc
 {
-    [mResponseHeaders release];
-    [super dealloc];
 }
 
 
@@ -105,7 +103,7 @@ static BOOL _debug = NO;
 - (OBEXError)beginWithHeaders:(BBOBEXHeaderSet *)headers
 {
     if (_debug) NSLog(@"[BBOBEXConnectRequest] beginWithHeaders (%d headers)", [headers count]);
-    CFMutableDataRef bytes = (CFMutableDataRef)[headers toBytes];
+    CFMutableDataRef bytes = (__bridge CFMutableDataRef)[headers toBytes];
     if (!bytes && [headers count] > 0)
         return kOBEXInternalError;
     
@@ -154,7 +152,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [super dealloc];
 }
 
 @end
@@ -166,7 +163,7 @@ static BOOL _debug = NO;
 {
     if (_debug) NSLog(@"[BBOBEXDisconnectRequest] beginWithHeaders (%d headers)", [headers count]);
     
-    CFMutableDataRef bytes = (CFMutableDataRef)[headers toBytes];
+    CFMutableDataRef bytes = (__bridge CFMutableDataRef)[headers toBytes];
     if (!bytes && [headers count] > 0)
         return kOBEXInternalError;
     
@@ -212,7 +209,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [super dealloc];
 }
 
 @end
@@ -226,7 +222,7 @@ static BOOL _debug = NO;
           inputStream:(NSInputStream *)inputStream
 {
     self = [super initWithClient:client eventSelector:selector session:session];
-    mInputStream = [inputStream retain];
+    mInputStream = inputStream;
     return self;
 }
 
@@ -294,7 +290,7 @@ static BOOL _debug = NO;
         return kOBEXBadArgumentError;
     }
     
-    CFMutableDataRef bytes = (CFMutableDataRef)[headers toBytes];
+    CFMutableDataRef bytes = (__bridge CFMutableDataRef)[headers toBytes];
     if (!bytes && [headers count] > 0)
         return kOBEXInternalError;
         
@@ -340,8 +336,6 @@ static BOOL _debug = NO;
         mHeadersDataRef = bytes;
     
     if (mutableData) {
-        [mutableData retain];
-        [mSentBodyData release];
         mSentBodyData = mutableData;
         
         if (status == kOBEXSuccess) {
@@ -374,8 +368,6 @@ static BOOL _debug = NO;
                           selectorTarget:mClient
                                   refCon:NULL];
     
-    [mutableData retain];
-    [mSentBodyData release];
     mSentBodyData = mutableData;
     
     if (status == kOBEXSuccess) {
@@ -420,9 +412,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [mSentBodyData release];
-    [mInputStream release];
-    [super dealloc];
 }
 
 @end
@@ -436,7 +425,7 @@ static BOOL _debug = NO;
         outputStream:(NSOutputStream *)outputStream
 {
     self = [super initWithClient:client eventSelector:selector session:session];
-    mOutputStream = [outputStream retain];
+    mOutputStream = outputStream;
     return self;
 }
 
@@ -449,7 +438,7 @@ static BOOL _debug = NO;
     
     mTotalGetLength = 0;
     
-    CFMutableDataRef bytes = (CFMutableDataRef)[headers toBytes];
+    CFMutableDataRef bytes = (__bridge CFMutableDataRef)[headers toBytes];
     if (!bytes && [headers count] > 0)
         return kOBEXInternalError;
     
@@ -555,8 +544,6 @@ static BOOL _debug = NO;
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [mOutputStream release];
-    [super dealloc];
 }
 
 @end
@@ -585,7 +572,7 @@ createDirectoriesIfNeeded:(BOOL)createDirectoriesIfNeeded
 {   
     if (_debug) NSLog(@"[BBOBEXSetPathRequest] beginWithHeaders (%d headers)", [headers count]);    
     
-    CFMutableDataRef bytes = (CFMutableDataRef)[headers toBytes];
+    CFMutableDataRef bytes = (__bridge CFMutableDataRef)[headers toBytes];
     if (!bytes && [headers count] > 0)
         return kOBEXInternalError;
     
@@ -633,7 +620,6 @@ createDirectoriesIfNeeded:(BOOL)createDirectoriesIfNeeded
 {
     if (mHeadersDataRef)
         CFRelease(mHeadersDataRef);
-    [super dealloc];
 }
 
 @end
@@ -647,7 +633,7 @@ createDirectoriesIfNeeded:(BOOL)createDirectoriesIfNeeded
 currentRequestStream:(NSStream *)stream
 {
     self = [super initWithClient:client eventSelector:selector session:session];
-    mStream = [stream retain];
+    mStream = stream;
     return self;
 }
 
@@ -655,7 +641,7 @@ currentRequestStream:(NSStream *)stream
 {
     if (_debug) NSLog(@"[BBOBEXAbortRequest] beginWithHeaders (%d headers)", [headers count]);
     
-    CFMutableDataRef bytes = (CFMutableDataRef)[headers toBytes];
+    CFMutableDataRef bytes = (__bridge CFMutableDataRef)[headers toBytes];
     if (!bytes && [headers count] > 0)
         return kOBEXInternalError;
     
@@ -696,8 +682,6 @@ currentRequestStream:(NSStream *)stream
 
 - (void)dealloc
 {
-    [mStream release];
-    [super dealloc];
 }
 
 @end

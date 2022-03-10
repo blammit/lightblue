@@ -45,7 +45,9 @@ static BOOL _debug = NO;
 {
     self = [super init];
     
-    mSession = [[IOBluetoothOBEXSession alloc] initWithDevice:[IOBluetoothDevice withAddress:deviceAddress]
+    IOBluetoothDevice *device = [IOBluetoothDevice deviceWithAddress:deviceAddress];
+
+    mSession = [[IOBluetoothOBEXSession alloc] initWithDevice:device
                                                     channelID:channelID];
     mDelegate = delegate;    
     
@@ -85,10 +87,7 @@ static BOOL _debug = NO;
                                              session:mSession];
     OBEXError status = [request beginWithHeaders:headers];
     if (status == kOBEXSuccess) {
-        [mCurrentRequest release];
         mCurrentRequest = request;
-    } else {
-        [request release];
     }
     return status;
 }
@@ -106,10 +105,7 @@ static BOOL _debug = NO;
             [self addConnectionIDToHeaders:headers] : headers);
     OBEXError status = [request beginWithHeaders:realHeaders];    
     if (status == kOBEXSuccess) {
-        [mCurrentRequest release];
         mCurrentRequest = request;
-    } else {
-        [request release];
     }
     return status;
 }
@@ -129,10 +125,7 @@ static BOOL _debug = NO;
             [self addConnectionIDToHeaders:headers] : headers);    
     OBEXError status = [request beginWithHeaders:realHeaders];    
     if (status == kOBEXSuccess) {
-        [mCurrentRequest release];
         mCurrentRequest = request;
-    } else {
-        [request release];
     }
     return status;
 }
@@ -152,10 +145,7 @@ static BOOL _debug = NO;
             [self addConnectionIDToHeaders:headers] : headers);    
     OBEXError status = [request beginWithHeaders:realHeaders];    
     if (status == kOBEXSuccess) {
-        [mCurrentRequest release];
         mCurrentRequest = request;
-    } else {
-        [request release];
     }
     return status;
 }
@@ -177,10 +167,7 @@ static BOOL _debug = NO;
             [self addConnectionIDToHeaders:headers] : headers);    
     OBEXError status = [request beginWithHeaders:realHeaders];    
     if (status == kOBEXSuccess) {
-        [mCurrentRequest release];
         mCurrentRequest = request;
-    } else {
-        [request release];
     }
     return status;
 }
@@ -209,16 +196,12 @@ static BOOL _debug = NO;
     
     mAborting = NO;
     [mCurrentRequest finishedWithError:error responseCode:responseCode];
-    
-    [mCurrentRequest release];
     mCurrentRequest = nil;
 }
 
 - (void)performAbort
 {
     if (_debug) NSLog(DEBUG_NAME @"[performAbort]");
-    
-    [mCurrentRequest release];
     
     mCurrentRequest = [[BBOBEXAbortRequest alloc] initWithClient:self
                                                    eventSelector:@selector(handleSessionEvent:)
@@ -310,8 +293,6 @@ static BOOL _debug = NO;
 // for internal testing
 - (void)setOBEXSession:(OBEXSession *)session
 {
-    [session retain];
-    [mSession release];
     mSession = session;
 }
 
@@ -365,11 +346,8 @@ static BOOL _debug = NO;
 - (void)dealloc
 {
     [mSession setEventSelector:NULL target:nil refCon:NULL];
-    [mCurrentRequest release];
     mCurrentRequest = nil; // if client is deleted during a delegate callback
     [mSession closeTransportConnection];
-    [mSession release];
     mSession = nil;
-    [super dealloc];
 }
 @end
